@@ -62,13 +62,41 @@ machine_pc_init(const machine_t *model)
     return ret;
 }
 
+int
+machine_pc81_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/ibmpc81/BIOS_5150_19OCT81_U33.BIN",
+			   0x000fe000, 40960, 0);
+    if (ret) {
+	bios_load_aux_linear(L"roms/machines/ibmpc81/IBM 5150 - Cassette BASIC version C1.00 - U29 - 5700019.bin",
+			     0x000f6000, 8192, 0);
+	bios_load_aux_linear(L"roms/machines/ibmpc81/IBM 5150 - Cassette BASIC version C1.00 - U30 - 5700027.bin",
+			     0x000f8000, 8192, 0);
+	bios_load_aux_linear(L"roms/machines/ibmpc81/IBM 5150 - Cassette BASIC version C1.00 - U31 - 5700035.bin",
+			     0x000fa000, 8192, 0);
+	bios_load_aux_linear(L"roms/machines/ibmpc81/IBM 5150 - Cassette BASIC version C1.00 - U32 - 5700043.bin",
+			     0x000fc000, 8192, 0);
+    }
+
+    if (bios_only || !ret)
+	return ret;
+
+    device_add(&keyboard_pc_device);
+
+    machine_xt_common_init(model);
+
+    return ret;
+}
+
 
 int
 machine_pc82_init(const machine_t *model)
 {
     int ret, ret2;
 
-    ret = bios_load_linear(L"roms/machines/ibmpc82/pc102782.bin",
+    ret = bios_load_linear(L"roms/machines/ibmpc82/BIOS_5150_27OCT82_U33.BIN",
 			   0x000fe000, 40960, 0);
     if (ret) {
 	ret2 = bios_load_aux_linear(L"roms/machines/ibmpc82/ibm-basic-1.10.rom",
@@ -114,12 +142,12 @@ machine_xt_init(const machine_t *model)
     ret = bios_load_linear(L"roms/machines/ibmxt/xt.rom",
 			   0x000f0000, 65536, 0);
     if (!ret) {
-	ret = bios_load_linear(L"roms/machines/ibmxt/1501512.u18",
+	ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 			       0x000fe000, 65536, 0x6000);
 	if (ret) {
-		bios_load_aux_linear(L"roms/machines/ibmxt/1501512.u18",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 				     0x000f8000, 24576, 0);
-		bios_load_aux_linear(L"roms/machines/ibmxt/5000027.u19",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U19_5000027_27256.BIN",
 				     0x000f0000, 32768, 0);
 	}
     }
@@ -153,6 +181,31 @@ machine_genxt_init(const machine_t *model)
 
 int
 machine_xt86_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/ibmxt86/BIOS_5160_10JAN86_U18_62X0851_27256_F800.BIN",
+			   0x000fe000, 65536, 0x6000);
+    if (ret) {
+	(void) bios_load_aux_linear(L"roms/machines/ibmxt86/BIOS_5160_10JAN86_U18_62X0851_27256_F800.BIN",
+				    0x000f8000, 24576, 0);
+	(void) bios_load_aux_linear(L"roms/machines/ibmxt86/BIOS_5160_10JAN86_U19_62X0854_27256_F000.BIN",
+				    0x000f0000, 32768, 0);
+    }
+
+    if (bios_only || !ret)
+	return ret;
+
+    device_add(&keyboard_xt86_device);
+    device_add(&ibm_5161_device);
+
+    machine_xt_common_init(model);
+
+    return ret;
+}
+
+int
+machine_xt861_init(const machine_t *model)
 {
     int ret;
 

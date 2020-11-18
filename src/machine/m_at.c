@@ -159,8 +159,59 @@ machine_at_ibm_init(const machine_t *model)
 {
     int ret;
 
-    ret = bios_load_interleaved(L"roms/machines/ibmat/62x0820.u27",
-				L"roms/machines/ibmat/62x0821.u47",
+    ret = bios_load_interleaved(L"roms/machines/ibmat/BIOS_5170_10JAN84_U27_6181028_27256_6MHZ.BIN",
+				L"roms/machines/ibmat/BIOS_5170_10JAN84_U47_6181029_27256_6MHZ.BIN",
+				0x000f0000, 65536, 0);
+
+    if (bios_only || !ret)
+	return ret;
+
+    machine_at_ibm_common_init(model);
+
+    return ret;
+}
+
+int
+machine_at_ibm850_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_interleaved(L"roms/machines/ibmat/BIOS_5170_10JUN85_U27_6480090_27256.BIN",
+				L"roms/machines/ibmat/BIOS_5170_10JUN85_U47_6480091_27256.BIN",
+				0x000f0000, 65536, 0);
+
+    if (bios_only || !ret)
+	return ret;
+
+    machine_at_ibm_common_init(model);
+
+    return ret;
+}
+
+int
+machine_at_ibm851_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_interleaved(L"roms/machines/ibmat/BIOS_5170_15NOV85_U27_62X0820_27256.BIN",
+				L"roms/machines/ibmat/BIOS_5170_15NOV85_U47_62X0821_27256.BIN",
+				0x000f0000, 65536, 0);
+
+    if (bios_only || !ret)
+	return ret;
+
+    machine_at_ibm_common_init(model);
+
+    return ret;
+}
+
+int
+machine_at_ibm852_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_interleaved(L"roms/machines/ibmat/BIOS_5170_15NOV85_U27_61X9266_27256.BIN",
+				L"roms/machines/ibmat/BIOS_5170_15NOV85_U47_61X9265_27256.BIN",
 				0x000f0000, 65536, 0);
 
     if (bios_only || !ret)

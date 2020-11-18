@@ -218,6 +218,9 @@ extern void	machine_at_ide_init(const machine_t *);
 extern void	machine_at_ps2_ide_init(const machine_t *);
 
 extern int	machine_at_ibm_init(const machine_t *);
+extern int	machine_at_ibm850_init(const machine_t *);
+extern int	machine_at_ibm851_init(const machine_t *);
+extern int	machine_at_ibm852_init(const machine_t *);
 
 //IBM AT with custom BIOS
 extern int	machine_at_ibmatami_init(const machine_t *); // IBM AT with AMI BIOS
@@ -559,12 +562,14 @@ extern const device_t   *tandy1k_sl_get_device(void);
 
 /* m_xt.c */
 extern int	machine_pc_init(const machine_t *);
+extern int	machine_pc81_init(const machine_t *);
 extern int	machine_pc82_init(const machine_t *);
 
 extern int	machine_xt_init(const machine_t *);
 extern int	machine_genxt_init(const machine_t *);
 
 extern int	machine_xt86_init(const machine_t *);
+extern int	machine_xt861_init(const machine_t *);
 
 extern int	machine_xt_americxt_init(const machine_t *);
 extern int	machine_xt_amixt_init(const machine_t *);
