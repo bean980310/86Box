@@ -142,12 +142,41 @@ machine_xt_init(const machine_t *model)
     ret = bios_load_linear(L"roms/machines/ibmxt/xt.rom",
 			   0x000f0000, 65536, 0);
     if (!ret) {
-	ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
+	ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_16AUG82_U18_5000026.BIN",
 			       0x000fe000, 65536, 0x6000);
 	if (ret) {
-		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_16AUG82_U18_5000026.BIN",
 				     0x000f8000, 24576, 0);
-		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U19_5000027_27256.BIN",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_16AUG82_U19_5000027.BIN",
+				     0x000f0000, 32768, 0);
+	}
+    }
+
+    if (bios_only || !ret)
+	return ret;
+    
+    device_add(&keyboard_xt_device);    
+    device_add(&ibm_5161_device);
+
+    machine_xt_common_init(model);
+
+    return ret;
+}
+
+int
+machine_xt82_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/ibmxt82/xt.rom",
+			   0x000f0000, 65536, 0);
+    if (!ret) {
+	ret = bios_load_linear(L"roms/machines/ibmxt82/BIOS_5160_08NOV82_U18_1501512.BIN",
+			       0x000fe000, 65536, 0x6000);
+	if (ret) {
+		bios_load_aux_linear(L"roms/machines/ibmxt82/BIOS_5160_08NOV82_U18_1501512.BIN",
+				     0x000f8000, 24576, 0);
+		bios_load_aux_linear(L"roms/machines/ibmxt82/BIOS_5160_08NOV82_U19_5000027_27256.BIN",
 				     0x000f0000, 32768, 0);
 	}
     }
@@ -155,9 +184,10 @@ machine_xt_init(const machine_t *model)
     if (bios_only || !ret)
 	return ret;
 
-    machine_xt_init_ex(model);
-
+    device_add(&keyboard_xt_device);    
     device_add(&ibm_5161_device);
+
+    machine_xt_common_init(model);
 
     return ret;
 }

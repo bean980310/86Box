@@ -218,7 +218,7 @@ extern void	machine_at_ide_init(const machine_t *);
 extern void	machine_at_ps2_ide_init(const machine_t *);
 
 extern int	machine_at_ibm_init(const machine_t *);
-extern int	machine_at_ibm850_init(const machine_t *);
+extern int	machine_at_ibm85_init(const machine_t *);
 extern int	machine_at_ibm851_init(const machine_t *);
 extern int	machine_at_ibm852_init(const machine_t *);
 
@@ -346,6 +346,7 @@ extern int	machine_at_cmdpc_init(const machine_t *);
 extern int	machine_at_portableii_init(const machine_t *);
 extern int	machine_at_portableiii_init(const machine_t *);
 extern int	machine_at_portableiii386_init(const machine_t *);
+extern int	machine_at_deskpro386_init(const machine_t *);
 #ifdef EMU_DEVICE_H
 extern const device_t 	*at_cpqiii_get_device(void);
 #endif
@@ -566,6 +567,7 @@ extern int	machine_pc81_init(const machine_t *);
 extern int	machine_pc82_init(const machine_t *);
 
 extern int	machine_xt_init(const machine_t *);
+extern int	machine_xt82_init(const machine_t *);
 extern int	machine_genxt_init(const machine_t *);
 
 extern int	machine_xt86_init(const machine_t *);
