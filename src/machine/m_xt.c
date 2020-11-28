@@ -62,6 +62,7 @@ machine_pc_init(const machine_t *model)
     return ret;
 }
 
+
 int
 machine_pc81_init(const machine_t *model)
 {
@@ -258,7 +259,6 @@ machine_xt861_init(const machine_t *model)
 
     return ret;
 }
-
 
 static void
 machine_xt_clone_init(const machine_t *model)
