@@ -93,7 +93,6 @@ machine_xt_compaq_deskpro87_init(const machine_t *model)
     return ret;
 }
 
-
 int
 machine_xt_compaq_portable_init(const machine_t *model)
 {
