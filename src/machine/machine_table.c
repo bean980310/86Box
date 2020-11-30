@@ -56,7 +56,7 @@ const machine_type_t machine_types[] = {
 
 const machine_t machines[] = {
     /* 8088 Machines */
- { "[8088] IBM PC (1981)",			"ibmpc",		MACHINE_TYPE_8088,		CPU_PKG_8088, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC,									 16,   64,  16,   0,		      machine_pc_init, NULL			},
+    { "[8088] IBM PC (1981)",			"ibmpc",		MACHINE_TYPE_8088,		CPU_PKG_8088, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC,									 16,   64,  16,   0,		      machine_pc_init, NULL			},
     { "[8088] IBM PC (1981, Rev.A)",			"ibmpc81",		MACHINE_TYPE_8088,		CPU_PKG_8088, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC,									 16,   64,  16,   0,		      machine_pc81_init, NULL			},
     { "[8088] IBM PC (1982, Rev.B)",			"ibmpc82",		MACHINE_TYPE_8088,		CPU_PKG_8088, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC,									64,  256, 64,   0,		    machine_pc82_init, NULL			},
     { "[8088] IBM PCjr",			"ibmpcjr",		MACHINE_TYPE_8088,		CPU_PKG_8088, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC | MACHINE_VIDEO_FIXED,						128,  640, 128,   0,		    machine_pcjr_init, pcjr_get_device		},
@@ -89,7 +89,8 @@ const machine_t machines[] = {
     { "[8086] Amstrad PC3086",			"pc3086",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC | MACHINE_VIDEO_FIXED | MACHINE_MOUSE,				640,  640,   0,  63,		  machine_pc3086_init, pc3086_get_device	},
     { "[8086] Amstrad PC20(0)",			"pc200",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC | MACHINE_VIDEO | MACHINE_MOUSE | MACHINE_NONMI,			512,  640, 128,  63,		   machine_pc200_init, pc200_get_device		},
     { "[8086] Amstrad PPC512/640",		"ppc512",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC | MACHINE_VIDEO | MACHINE_MOUSE | MACHINE_NONMI,			512,  640, 128,  63,		  machine_ppc512_init, ppc512_get_device	},
-    { "[8086] Compaq Deskpro",			"deskpro",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC,									128,  640, 128,   0,   machine_xt_compaq_deskpro_init, NULL			},
+    { "[8086] Compaq Deskpro (1984)",			"deskpro",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC,									128,  640, 128,   0,   machine_xt_compaq_deskpro_init, NULL			},
+    { "[8086] Compaq Deskpro (1987)",			"deskpro87",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC,									128,  640, 128,   0,   machine_xt_compaq_deskpro87_init, NULL			},
     { "[8086] Olivetti M24",			"olivetti_m24",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC | MACHINE_VIDEO_FIXED | MACHINE_MOUSE,				128,  640, 128,   0,		  machine_olim24_init, m24_get_device		},
     { "[8086] Schetmash Iskra-3104",		"iskra3104",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC,									128,  640, 128,   0,	    machine_xt_iskra3104_init, NULL			},
     { "[8086] Tandy 1000 SL/2",			"tandy1000sl2",		MACHINE_TYPE_8086,		CPU_PKG_8086, 0, 0, 0, 0, 0, 0, 0,										MACHINE_PC | MACHINE_VIDEO_FIXED,						512,  768, 128,   0,	    machine_tandy1000sl2_init, tandy1k_sl_get_device	},
@@ -162,6 +163,7 @@ const machine_t machines[] = {
     { "[ACC 2168] AMI 386DX clone",		"acc386",		MACHINE_TYPE_386DX,		CPU_PKG_386DX, 0, 0, 0, 0, 0, 0, 0,										MACHINE_AT,									  1,   16,   1, 127,	       machine_at_acc386_init, NULL			},
     { "[C&T 386] ECS 386/32",			"ecs386",		MACHINE_TYPE_386DX,		CPU_PKG_386DX, 0, 0, 0, 0, 0, 0, 0,										MACHINE_AT,									  1,   16,   1, 127,	       machine_at_ecs386_init, NULL			},		
     { "[ISA] Compaq Portable III (386)",	"portableiii386",       MACHINE_TYPE_386DX,		CPU_PKG_386DX, 0, 0, 0, 0, 0, 0, 0,										MACHINE_AT | MACHINE_IDE | MACHINE_VIDEO,		  			  1,   14,   1, 127,   machine_at_portableiii386_init, at_cpqiii_get_device	},
+    { "[ISA] Compaq Deskpro 386",	"deskpro386",       MACHINE_TYPE_386DX,		CPU_PKG_386DX, 0, 0, 0, 0, 0, 0, 0,										MACHINE_AT | MACHINE_IDE,		  			  1,   14,   1, 127,   machine_at_deskpro386_init, NULL },
     { "[ISA] Micronics 386 clone",		"micronics386",		MACHINE_TYPE_386DX,		CPU_PKG_386DX, 0, 0, 0, 0, 0, 0, 0,										MACHINE_AT,									512, 8192, 128, 127,	 machine_at_micronics386_init, NULL			},
     { "[SiS 310] ASUS ISA-386C",		"asus386",		MACHINE_TYPE_386DX,		CPU_PKG_386DX, 0, 0, 0, 0, 0, 0, 0,										MACHINE_AT,									512,16384, 128, 127,	      machine_at_asus386_init, NULL			},
     { "[UMC 491] US Technologies 386",		"ustechnologies386",	MACHINE_TYPE_386DX,		CPU_PKG_386DX, 0, 0, 0, 0, 0, 0, 0,										MACHINE_AT,								          1,   16,   1, 127,machine_at_ustechnologies386_init, NULL			},

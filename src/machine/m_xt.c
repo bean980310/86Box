@@ -260,6 +260,7 @@ machine_xt861_init(const machine_t *model)
     return ret;
 }
 
+
 static void
 machine_xt_clone_init(const machine_t *model)
 {
