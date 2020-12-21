@@ -42,7 +42,7 @@ machine_xt_compaq_deskpro_init(const machine_t *model)
 {
     int ret;
 
-    ret = bios_load_linear(L"roms/machines/deskpro/Compaq - BIOS - Revision G - 105681-001.bin",
+    ret = bios_load_linear(L"roms/machines/deskpro/Compaq - BIOS - Revision J - 106265-002.bin",
 			   0x000fe000, 8192, 0);
 
     if (bios_only || !ret)
@@ -56,7 +56,7 @@ machine_xt_compaq_deskpro_init(const machine_t *model)
     if (fdc_type == FDC_INTERNAL)
 	device_add(&fdc_xt_device);
     nmi_init();
-    if (joystick_type != JOYSTICK_TYPE_NONE)
+    if (joystick_type)
 	device_add(&gameport_device);
 
     lpt1_remove();
@@ -84,7 +84,7 @@ machine_xt_compaq_deskpro87_init(const machine_t *model)
     if (fdc_type == FDC_INTERNAL)
 	device_add(&fdc_xt_device);
     nmi_init();
-    if (joystick_type != JOYSTICK_TYPE_NONE)
+    if (joystick_type)
 	device_add(&gameport_device);
 
     lpt1_remove();
@@ -112,7 +112,7 @@ machine_xt_compaq_portable_init(const machine_t *model)
     if (fdc_type == FDC_INTERNAL)
 	device_add(&fdc_xt_device);
     nmi_init();
-    if (joystick_type != JOYSTICK_TYPE_NONE)
+    if (joystick_type)
 	device_add(&gameport_device);
 
     lpt1_remove();

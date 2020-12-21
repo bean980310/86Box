@@ -26,11 +26,11 @@ machine_xt_common_init(const machine_t *model)
     pit_ctr_set_out_func(&pit->counters[1], pit_refresh_timer_xt);
 
     if (fdc_type == FDC_INTERNAL)	
-	device_add(&fdc_xt_device);
+	    device_add(&fdc_xt_device);
     
     nmi_init();
-    if (joystick_type != JOYSTICK_TYPE_NONE)
-	device_add(&gameport_device);
+    if (joystick_type)
+	    device_add(&gameport_device);
 }
 
 
@@ -68,16 +68,16 @@ machine_pc81_init(const machine_t *model)
 {
     int ret;
 
-    ret = bios_load_linear(L"roms/machines/ibmpc81/BIOS_5150_19OCT81_U33.BIN",
+    ret = bios_load_linear(L"roms/machines/ibmpc/BIOS_5150_19OCT81_U33.BIN",
 			   0x000fe000, 40960, 0);
     if (ret) {
-	bios_load_aux_linear(L"roms/machines/ibmpc81/IBM 5150 - Cassette BASIC version C1.00 - U29 - 5700019.bin",
+	bios_load_aux_linear(L"roms/machines/ibmpc/IBM 5150 - Cassette BASIC version C1.00 - U29 - 5700019.bin",
 			     0x000f6000, 8192, 0);
-	bios_load_aux_linear(L"roms/machines/ibmpc81/IBM 5150 - Cassette BASIC version C1.00 - U30 - 5700027.bin",
+	bios_load_aux_linear(L"roms/machines/ibmpc/IBM 5150 - Cassette BASIC version C1.00 - U30 - 5700027.bin",
 			     0x000f8000, 8192, 0);
-	bios_load_aux_linear(L"roms/machines/ibmpc81/IBM 5150 - Cassette BASIC version C1.00 - U31 - 5700035.bin",
+	bios_load_aux_linear(L"roms/machines/ibmpc/IBM 5150 - Cassette BASIC version C1.00 - U31 - 5700035.bin",
 			     0x000fa000, 8192, 0);
-	bios_load_aux_linear(L"roms/machines/ibmpc81/IBM 5150 - Cassette BASIC version C1.00 - U32 - 5700043.bin",
+	bios_load_aux_linear(L"roms/machines/ibmpc/IBM 5150 - Cassette BASIC version C1.00 - U32 - 5700043.bin",
 			     0x000fc000, 8192, 0);
     }
 
@@ -140,55 +140,45 @@ machine_xt_init(const machine_t *model)
 {
     int ret;
 
-    ret = bios_load_linear(L"roms/machines/ibmxt/xt.rom",
+    ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 			   0x000f0000, 65536, 0);
-    if (!ret) {
-	ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_16AUG82_U18_5000026.BIN",
-			       0x000fe000, 65536, 0x6000);
 	if (ret) {
-		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_16AUG82_U18_5000026.BIN",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 				     0x000f8000, 24576, 0);
-		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_16AUG82_U19_5000027.BIN",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U19_5000027_27256.BIN",
 				     0x000f0000, 32768, 0);
-	}
     }
 
     if (bios_only || !ret)
 	return ret;
-    
-    device_add(&keyboard_xt_device);    
-    device_add(&ibm_5161_device);
 
-    machine_xt_common_init(model);
+    machine_xt_init_ex(model);
+
+    device_add(&ibm_5161_device);
 
     return ret;
 }
 
 int
-machine_xt82_init(const machine_t *model)
+machine_xtportable_init(const machine_t *model)
 {
     int ret;
 
-    ret = bios_load_linear(L"roms/machines/ibmxt82/xt.rom",
+    ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 			   0x000f0000, 65536, 0);
-    if (!ret) {
-	ret = bios_load_linear(L"roms/machines/ibmxt82/BIOS_5160_08NOV82_U18_1501512.BIN",
-			       0x000fe000, 65536, 0x6000);
 	if (ret) {
-		bios_load_aux_linear(L"roms/machines/ibmxt82/BIOS_5160_08NOV82_U18_1501512.BIN",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 				     0x000f8000, 24576, 0);
-		bios_load_aux_linear(L"roms/machines/ibmxt82/BIOS_5160_08NOV82_U19_5000027_27256.BIN",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U19_5000027_27256.BIN",
 				     0x000f0000, 32768, 0);
-	}
     }
 
     if (bios_only || !ret)
 	return ret;
 
-    device_add(&keyboard_xt_device);    
-    device_add(&ibm_5161_device);
+    machine_xt_init_ex(model);
 
-    machine_xt_common_init(model);
+    device_add(&ibm_5161_device);
 
     return ret;
 }
@@ -227,10 +217,9 @@ machine_xt86_init(const machine_t *model)
     if (bios_only || !ret)
 	return ret;
 
-    device_add(&keyboard_xt86_device);
-    device_add(&ibm_5161_device);
+    machine_xt_init_ex(model);
 
-    machine_xt_common_init(model);
+    device_add(&ibm_5161_device);
 
     return ret;
 }
@@ -252,10 +241,9 @@ machine_xt861_init(const machine_t *model)
     if (bios_only || !ret)
 	return ret;
 
-    device_add(&keyboard_xt86_device);
-    device_add(&ibm_5161_device);
+    machine_xt_init_ex(model);
 
-    machine_xt_common_init(model);
+    device_add(&ibm_5161_device);
 
     return ret;
 }
@@ -403,6 +391,138 @@ machine_xt_iskra3104_init(const machine_t *model)
 	return ret;
 
     machine_xt_clone_init(model);
+
+    return ret;
+}
+
+int
+machine_xt_ncrpc4i_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/ncr_pc4i/NCR_PC4i_BIOSROM_1985.bin",
+			   0x000fc000, 16384, 0);
+
+    if (bios_only || !ret)
+	    return ret;
+
+    machine_xt_clone_init(model);
+
+    return ret;
+}
+
+int
+machine_xt_mpc1600_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/mpc1600/mpc4.34_merged.bin",
+			   0x000fc000, 16384, 0);
+    
+    if (bios_only || !ret)
+	    return ret;
+
+    device_add(&keyboard_pc82_device);
+
+    machine_xt_common_init(model);
+
+    return ret;
+}
+
+
+int
+machine_xt_eaglepcspirit_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/eagle_pcspirit/u1101.bin",
+			   0x000fe000, 16384, 0);
+    
+    if (ret) {
+        bios_load_aux_linear(L"roms/machines/eagle_pcspirit/u1103.bin",
+			     0x000fc000, 8192, 0);
+    }
+
+    if (bios_only || !ret)
+	    return ret;
+
+    device_add(&keyboard_pc82_device);
+
+    machine_xt_common_init(model);
+
+    return ret;
+}
+
+int
+machine_xt_multitechpc700_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/multitech_pc700/multitech pc-700 3.1.bin",
+			   0x000fe000, 8192, 0);
+    
+    if (bios_only || !ret)
+	    return ret;
+
+    device_add(&keyboard_pc_device);
+
+    machine_xt_common_init(model);
+
+    return ret;
+}
+
+
+/*
+ * Current bugs and limitations:
+ * - 640-768 conventional memory not usable (should be mapped at address d0000-effff)
+ */
+int
+machine_xt_p3105_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/philips_p3105/philipsnms9100.bin",
+			   0x000fc000, 16384, 0);
+    
+    if (bios_only || !ret)
+	    return ret;
+
+    device_add(&keyboard_pc_device);
+
+    machine_xt_common_init(model);
+
+    return ret;
+}
+
+/*
+ * Current bugs and limitations:
+ * - 640-768 conventional memory not usable (should be mapped at address d0000-effff)
+ * - BIOS detects 4 fdds, so hdd letter is E instead of C
+ */
+int
+machine_xt_p3120_init(const machine_t *model)
+{
+    int ret;
+
+    ret = bios_load_linear(L"roms/machines/philips_p3120/philips_p3120.bin",
+			   0x000f8000, 32768, 0);
+    
+    if (bios_only || !ret)
+	    return ret;
+
+    device_add(&keyboard_pc_device);
+
+    machine_common_init(model);
+
+    pit_ctr_set_out_func(&pit->counters[1], pit_refresh_timer_xt);
+
+    if (fdc_type == FDC_INTERNAL)	
+	    device_add(&fdc_at_device);
+    
+    nmi_init();
+
+    if (joystick_type)
+	    device_add(&gameport_device);
 
     return ret;
 }

@@ -22,6 +22,7 @@
 #define	FLAG_ADDR_BY8		2
 #define FLAG_EXT_WRITE		4
 #define FLAG_LATCH8		8
+#define FLAG_NOSKEW		16
 
 
 typedef struct {
@@ -124,7 +125,7 @@ typedef struct svga_t
     int override;
     void *p;
 
-    uint8_t crtc[128], gdcreg[64], attrregs[32], seqregs[64],
+    uint8_t crtc[256], gdcreg[64], attrregs[32], seqregs[256],
 	    egapal[16],
 	    *vram, *changedvram;
 

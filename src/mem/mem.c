@@ -25,6 +25,7 @@
 #include <wchar.h>
 #define HAVE_STDARG_H
 #include <86box/86box.h>
+#include <86box/version.h>
 #include "cpu.h"
 #include "x86_ops.h"
 #include "x86.h"
@@ -296,7 +297,7 @@ mmutranslatereal_normal(uint32_t addr, int rw)
 
     if ((temp & 0x80) && (cr4 & CR4_PSE)) {
 	/*4MB page*/
-	if (((CPL == 3) && !(temp & 4) && !cpl_override) || (rw && !(temp & 2) && (((CPL == 3) && !cpl_override) || (!is386 && (cr0 & WP_FLAG))))) {
+	if (((CPL == 3) && !(temp & 4) && !cpl_override) || (rw && !(temp & 2) && (((CPL == 3) && !cpl_override) || (is486 && (cr0 & WP_FLAG))))) {
 		cr2 = addr;
 		temp &= 1;
 		if (CPL == 3)
@@ -317,7 +318,7 @@ mmutranslatereal_normal(uint32_t addr, int rw)
 
     temp = rammap((temp & ~0xfff) + ((addr >> 10) & 0xffc));
     temp3 = temp & temp2;
-    if (!(temp&1) || ((CPL == 3) && !(temp3 & 4) && !cpl_override) || (rw && !(temp3 & 2) && (((CPL == 3) && !cpl_override) || (!is386 && (cr0 & WP_FLAG))))) {
+    if (!(temp&1) || ((CPL == 3) && !(temp3 & 4) && !cpl_override) || (rw && !(temp3 & 2) && (((CPL == 3) && !cpl_override) || (is486 && (cr0 & WP_FLAG))))) {
 	cr2 = addr;
 	temp &= 1;
 	if (CPL == 3) temp |= 4;
@@ -1162,11 +1163,11 @@ writememql(uint32_t addr, uint64_t val)
 }
 #else
 uint16_t
-readmemwl(uint32_t seg, uint32_t addr)
+readmemwl(uint32_t addr)
 {
     uint64_t addr64 = (uint64_t) addr;
     mem_mapping_t *map;
-    uint32_t addr2 = mem_logical_addr = seg + addr;
+    uint32_t addr2 = mem_logical_addr = addr;
 
     if (addr2 & 1) {
 	if (!cpu_cyrix_alignment || (addr2 & 7) == 7)
@@ -1178,7 +1179,7 @@ readmemwl(uint32_t seg, uint32_t addr)
 			if (mmutranslate_read(addr2+1) == 0xffffffffffffffffULL)
 				return 0xffff;
 		}
-		return readmembl(seg+addr)|(((uint16_t) readmembl(seg+addr+1))<<8);
+		return readmembl(addr)|(((uint16_t) readmembl(addr+1))<<8);
 	} else if (readlookup2[addr2 >> 12] != (uintptr_t) LOOKUP_INV)
 		return *(uint16_t *)(readlookup2[addr2 >> 12] + addr2);
     }
@@ -1200,12 +1201,8 @@ readmemwl(uint32_t seg, uint32_t addr)
 	return map->read_w(addr2, map->p);
 
     if (map && map->read_b) {
-	if (AT)
-		return map->read_b(addr2, map->p) |
-		       ((uint16_t) (map->read_b(addr2 + 1, map->p)) << 8);
-	else
-		return map->read_b(addr2, map->p) |
-		       ((uint16_t) (map->read_b(seg + ((addr + 1) & 0xffff), map->p)) << 8);
+	return map->read_b(addr2, map->p) |
+	       ((uint16_t) (map->read_b(addr2 + 1, map->p)) << 8);
     }
 
     return 0xffff;
@@ -1213,11 +1210,11 @@ readmemwl(uint32_t seg, uint32_t addr)
 
 
 void
-writememwl(uint32_t seg, uint32_t addr, uint16_t val)
+writememwl(uint32_t addr, uint16_t val)
 {
     uint64_t addr64 = (uint64_t) addr;
     mem_mapping_t *map;
-    uint32_t addr2 = mem_logical_addr = seg + addr;
+    uint32_t addr2 = mem_logical_addr = addr;
 
     if (addr2 & 1) {
 	if (!cpu_cyrix_alignment || (addr2 & 7) == 7)
@@ -1227,8 +1224,8 @@ writememwl(uint32_t seg, uint32_t addr, uint16_t val)
 			if (mmutranslate_write(addr2)   == 0xffffffffffffffffULL) return;
 			if (mmutranslate_write(addr2+1) == 0xffffffffffffffffULL) return;
 		}
-		writemembl(seg+addr,val);
-		writemembl(seg+addr+1,val>>8);
+		writemembl(addr,val);
+		writemembl(addr+1,val>>8);
 		return;
 	} else if (writelookup2[addr2 >> 12] != (uintptr_t) LOOKUP_INV) {
 		*(uint16_t *)(writelookup2[addr2 >> 12] + addr2) = val;
@@ -1268,11 +1265,11 @@ writememwl(uint32_t seg, uint32_t addr, uint16_t val)
 
 
 uint32_t
-readmemll(uint32_t seg, uint32_t addr)
+readmemll(uint32_t addr)
 {
     uint64_t addr64 = (uint64_t) addr;
     mem_mapping_t *map;
-    uint32_t addr2 = mem_logical_addr = seg + addr;
+    uint32_t addr2 = mem_logical_addr = addr;
 
     if (addr2 & 3) {
 	if (!cpu_cyrix_alignment || (addr2 & 7) > 4)
@@ -1282,7 +1279,7 @@ readmemll(uint32_t seg, uint32_t addr)
 			if (mmutranslate_read(addr2)   == 0xffffffffffffffffULL) return 0xffffffff;
 			if (mmutranslate_read(addr2+3) == 0xffffffffffffffffULL) return 0xffffffff;
 		}
-		return readmemwl(seg,addr)|(readmemwl(seg,addr+2)<<16);
+		return readmemwl(addr)|(readmemwl(addr+2)<<16);
 	} else if (readlookup2[addr2 >> 12] != (uintptr_t) LOOKUP_INV)
 		return *(uint32_t *)(readlookup2[addr2 >> 12] + addr2);
     }
@@ -1318,11 +1315,11 @@ readmemll(uint32_t seg, uint32_t addr)
 
 
 void
-writememll(uint32_t seg, uint32_t addr, uint32_t val)
+writememll(uint32_t addr, uint32_t val)
 {
     uint64_t addr64 = (uint64_t) addr;
     mem_mapping_t *map;
-    uint32_t addr2 = mem_logical_addr = seg + addr;
+    uint32_t addr2 = mem_logical_addr = addr;
 
     if (addr2 & 3) {
 	if (!cpu_cyrix_alignment || (addr2 & 7) > 4)
@@ -1332,8 +1329,8 @@ writememll(uint32_t seg, uint32_t addr, uint32_t val)
 			if (mmutranslate_write(addr2)   == 0xffffffffffffffffULL) return;
 			if (mmutranslate_write(addr2+3) == 0xffffffffffffffffULL) return;
 		}
-		writememwl(seg,addr,val);
-		writememwl(seg,addr+2,val>>16);
+		writememwl(addr,val);
+		writememwl(addr+2,val>>16);
 		return;
 	} else if (writelookup2[addr2 >> 12] != (uintptr_t) LOOKUP_INV) {
 		*(uint32_t *)(writelookup2[addr2 >> 12] + addr2) = val;
@@ -1379,11 +1376,11 @@ writememll(uint32_t seg, uint32_t addr, uint32_t val)
 
 
 uint64_t
-readmemql(uint32_t seg, uint32_t addr)
+readmemql(uint32_t addr)
 {
     uint64_t addr64 = (uint64_t) addr;
     mem_mapping_t *map;
-    uint32_t addr2 = mem_logical_addr = seg + addr;
+    uint32_t addr2 = mem_logical_addr = addr;
 
     if (addr2 & 7) {
 	cycles -= timing_misaligned;
@@ -1392,7 +1389,7 @@ readmemql(uint32_t seg, uint32_t addr)
 			if (mmutranslate_read(addr2)   == 0xffffffffffffffffULL) return 0xffffffffffffffffULL;
 			if (mmutranslate_read(addr2+7) == 0xffffffffffffffffULL) return 0xffffffffffffffffULL;
 		}
-		return readmemll(seg,addr)|((uint64_t)readmemll(seg,addr+4)<<32);
+		return readmemll(addr)|((uint64_t)readmemll(addr+4)<<32);
 	} else if (readlookup2[addr2 >> 12] != (uintptr_t) LOOKUP_INV)
 		return *(uint64_t *)(readlookup2[addr2 >> 12] + addr2);
     }
@@ -1412,16 +1409,16 @@ readmemql(uint32_t seg, uint32_t addr)
     if (map && map->read_l)
 	return map->read_l(addr2, map->p) | ((uint64_t)map->read_l(addr2 + 4, map->p) << 32);
 
-    return readmemll(seg,addr) | ((uint64_t)readmemll(seg,addr+4)<<32);
+    return readmemll(addr) | ((uint64_t)readmemll(addr+4)<<32);
 }
 
 
 void
-writememql(uint32_t seg, uint32_t addr, uint64_t val)
+writememql(uint32_t addr, uint64_t val)
 {
     uint64_t addr64 = (uint64_t) addr;
     mem_mapping_t *map;
-    uint32_t addr2 = mem_logical_addr = seg + addr;
+    uint32_t addr2 = mem_logical_addr = addr;
 
     if (addr2 & 7) {
 	cycles -= timing_misaligned;
@@ -1430,8 +1427,8 @@ writememql(uint32_t seg, uint32_t addr, uint64_t val)
 			if (mmutranslate_write(addr2)   == 0xffffffffffffffffULL) return;
 			if (mmutranslate_write(addr2+7) == 0xffffffffffffffffULL) return;
 		}
-		writememll(seg, addr, val);
-		writememll(seg, addr+4, val >> 32);
+		writememll(addr, val);
+		writememll(addr+4, val >> 32);
 		return;
 	} else if (writelookup2[addr2 >> 12] != (uintptr_t) LOOKUP_INV) {
 		*(uint64_t *)(writelookup2[addr2 >> 12] + addr2) = val;
@@ -2562,26 +2559,29 @@ mem_reset(void)
     }
 #endif
     if (mem_size > 2097152)
-	fatal("Attempting to use more than 2 GB of guest RAM\n");
+	fatal("Attempting to use more than 2 GB of emulated RAM\n");
 
 #if (!(defined __amd64__ || defined _M_X64))
     if (mem_size > 1048576) {
 	ram = (uint8_t *)malloc(1 << 30);		/* allocate and clear the RAM block of the first 1 GB */
 	if (ram == NULL) {
-		fatal("X86 > 1 GB: Failed to malloc() ram\n");
+		fatal("Failed to allocate primary RAM block. Make sure you have enough RAM available.\n");
 		return;
 	}
 	memset(ram, 0x00, (1 << 30));
 	ram2 = (uint8_t *)malloc(m - (1 << 30));	/* allocate and clear the RAM block above 1 GB */
 	if (ram2 == NULL) {
-		fatal("X86 > 1 GB: Failed to malloc() ram2\n");
+		if (config_changed == 2)
+			fatal(EMU_NAME " must be restarted for the memory amount change to be applied.\n");
+		else
+			fatal("Failed to allocate secondary RAM block. Make sure you have enough RAM available.\n");
 		return;
 	}
 	memset(ram2, 0x00, m - (1 << 30));
     } else {
 	ram = (uint8_t *)malloc(m);		/* allocate and clear the RAM block */
 	if (ram == NULL) {
-		fatal("X86 <= 1 GB: Failed to malloc() ram\n");
+		fatal("Failed to allocate RAM block. Make sure you have enough RAM available.\n");
 		return;
 	}
 	memset(ram, 0x00, m);
@@ -2589,7 +2589,7 @@ mem_reset(void)
 #else
     ram = (uint8_t *)malloc(m);		/* allocate and clear the RAM block */
     if (ram == NULL) {
-	fatal("X64: Failed to malloc() ram\n");
+	fatal("Failed to allocate RAM block. Make sure you have enough RAM available.\n");
 	return;
     }
     memset(ram, 0x00, m);

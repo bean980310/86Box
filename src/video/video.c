@@ -914,18 +914,12 @@ video_force_resize_set(uint8_t res)
     video_force_resize = res;
 }
 
-
 void
-loadfont(wchar_t *s, int format)
+loadfont_common(FILE *f, int format)
 {
-    FILE *f;
     int c, d;
-
-    f = rom_fopen(s, L"rb");
-    if (f == NULL)
-	return;
-
-    switch (format) {
+	
+	switch (format) {
 	case 0:		/* MDA */
 		for (c=0; c<256; c++)
 			for (d=0; d<8; d++)
@@ -1038,11 +1032,31 @@ loadfont(wchar_t *s, int format)
 		for (c = 0; c < 256; c++)
 			fread(&fontdat12x18[c][0], 1, 36, f);
 		break;
-    }
+		
+	}
 
     (void)fclose(f);
 }
 
+void
+loadfont_ex(wchar_t *s, int format, int offset)
+{
+	FILE *f;
+    
+    f = rom_fopen(s, L"rb");
+    if (f == NULL)
+		return;
+
+	fseek(f, offset, SEEK_SET);
+	loadfont_common(f, format);
+
+}
+
+void
+loadfont(wchar_t *s, int format)
+{
+    loadfont_ex(s, format, 0);
+}
 
 uint32_t
 video_color_transform(uint32_t color)

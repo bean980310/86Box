@@ -2083,8 +2083,8 @@ static void banshee_overlay_draw(svga_t *svga, int displine)
                         case VIDPROCCFG_FILTER_MODE_DITHER_4X4:
                         if (banshee->voodoo->scrfilter && banshee->voodoo->scrfilterEnabled)
                         {
-                                uint8_t fil[(svga->overlay_latch.xsize) * 3];
-                                uint8_t fil3[(svga->overlay_latch.xsize) * 3];
+                                uint8_t *fil = malloc((svga->overlay_latch.xsize) * 3);
+                                uint8_t *fil3 = malloc((svga->overlay_latch.xsize) * 3);
 
                                 if (banshee->vidProcCfg & VIDPROCCFG_H_SCALE_ENABLE) /* leilei HACK - don't know of real 4x1 hscaled behavior yet, double for now */
                                 {
@@ -2146,6 +2146,9 @@ static void banshee_overlay_draw(svga_t *svga, int displine)
                                         fil[(x)*3+2] = vb_filter_v1_rb [fil[x*3+2]] [fil3[(x+1) *3+2]];
                                         p[x] = (fil[x*3+2] << 16) | (fil[x*3+1] << 8) | fil[x*3];
                                 }
+
+                                free(fil);
+                                free(fil3);
                         }
                         else  /* filter disabled by emulator option */
                         {
@@ -2168,14 +2171,14 @@ static void banshee_overlay_draw(svga_t *svga, int displine)
                         case VIDPROCCFG_FILTER_MODE_DITHER_2X2:
                         if (banshee->voodoo->scrfilter && banshee->voodoo->scrfilterEnabled)
                         {
-                                uint8_t fil[(svga->overlay_latch.xsize) * 3];
-                                uint8_t soak[(svga->overlay_latch.xsize) * 3];
-                                uint8_t soak2[(svga->overlay_latch.xsize) * 3];
+                                uint8_t *fil = malloc((svga->overlay_latch.xsize) * 3);
+                                uint8_t *soak = malloc((svga->overlay_latch.xsize) * 3);
+                                uint8_t *soak2 = malloc((svga->overlay_latch.xsize) * 3);
 
-                                uint8_t samp1[(svga->overlay_latch.xsize) * 3];
-                                uint8_t samp2[(svga->overlay_latch.xsize) * 3];
-                                uint8_t samp3[(svga->overlay_latch.xsize) * 3];
-                                uint8_t samp4[(svga->overlay_latch.xsize) * 3];
+                                uint8_t *samp1 = malloc((svga->overlay_latch.xsize) * 3);
+                                uint8_t *samp2 = malloc((svga->overlay_latch.xsize) * 3);
+                                uint8_t *samp3 = malloc((svga->overlay_latch.xsize) * 3);
+                                uint8_t *samp4 = malloc((svga->overlay_latch.xsize) * 3);
 
                                 src = &svga->vram[src_addr2 & svga->vram_mask];
                                 OVERLAY_SAMPLE(banshee->overlay_buffer[1]);
@@ -2229,6 +2232,14 @@ static void banshee_overlay_draw(svga_t *svga, int displine)
                                                 p[x] = (fil[x*3+2] << 16) | (fil[x*3+1] << 8) | fil[x*3];
                                         }
                                 }
+
+                                free(fil);
+                                free(soak);
+                                free(soak2);
+                                free(samp1);
+                                free(samp2);
+                                free(samp3);
+                                free(samp4);
                         }
                         else  /* filter disabled by emulator option */
                         {
@@ -2357,11 +2368,11 @@ static uint8_t banshee_pci_read(int func, int addr, void *p)
                 case 0x1a: ret = 0x00; break;
                 case 0x1b: ret = 0x00; break;
 
-                /*Undocumented, but Voodoo 3 BIOS checks this*/
-                case 0x2c: ret = 0x1a; break;
-                case 0x2d: ret = 0x12; break;
-                case 0x2e: ret = (banshee->type == TYPE_V3_3000) ? 0x3a : 0x30; break;
-                case 0x2f: ret = 0x00; break;
+                /*Subsystem vendor ID*/
+                case 0x2c: ret = banshee->pci_regs[0x2c]; break;
+                case 0x2d: ret = banshee->pci_regs[0x2d]; break;
+                case 0x2e: ret = banshee->pci_regs[0x2e]; break;
+                case 0x2f: ret = banshee->pci_regs[0x2f]; break;
 
                 case 0x30: ret = banshee->pci_regs[0x30] & 0x01; break; /*BIOS ROM address*/
                 case 0x31: ret = 0x00; break;
@@ -2666,6 +2677,37 @@ static void *banshee_init_common(const device_t *info, wchar_t *fn, int has_sgra
         banshee->i2c = i2c_gpio_init("i2c_voodoo_banshee");
         banshee->i2c_ddc = i2c_gpio_init("ddc_voodoo_banshee");
         banshee->ddc = ddc_init(i2c_gpio_get_bus(banshee->i2c_ddc));
+
+        switch (type)
+        {
+                case TYPE_BANSHEE:
+			if (has_sgram) {
+				banshee->pci_regs[0x2c] = 0x1a;
+				banshee->pci_regs[0x2d] = 0x12;
+				banshee->pci_regs[0x2e] = 0x04;
+				banshee->pci_regs[0x2f] = 0x00;
+			} else {
+				banshee->pci_regs[0x2c] = 0x02;
+				banshee->pci_regs[0x2d] = 0x11;
+				banshee->pci_regs[0x2e] = 0x17;
+				banshee->pci_regs[0x2f] = 0x10;
+			}
+			break;
+
+                case TYPE_V3_2000:
+			banshee->pci_regs[0x2c] = 0x1a;
+			banshee->pci_regs[0x2d] = 0x12;
+			banshee->pci_regs[0x2e] = 0x30;
+			banshee->pci_regs[0x2f] = 0x00;
+			break;
+
+                case TYPE_V3_3000:
+			banshee->pci_regs[0x2c] = 0x1a;
+			banshee->pci_regs[0x2d] = 0x12;
+			banshee->pci_regs[0x2e] = 0x3a;
+			banshee->pci_regs[0x2f] = 0x00;
+			break;
+        }
 
 	video_inform(VIDEO_FLAG_TYPE_SPECIAL, &timing_banshee);
 

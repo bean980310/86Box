@@ -508,7 +508,7 @@ usage:
     (void)time(&now);
     info = localtime(&now);
     strftime(temp, sizeof(temp), "%Y/%m/%d %H:%M:%S", info);
-    pclog("#\n# %ls v%ls [f7dcd358, build 2694] logfile, created %s\n#\n",
+    pclog("#\n# %ls v%ls logfile, created %s\n#\n",
 		EMU_NAME_W, EMU_VERSION_W, temp);
     pclog("# Emulator path: %ls\n", exe_path);
     pclog("# Userfiles path: %ls\n", usr_path);
@@ -809,7 +809,7 @@ pc_reset_hard_init(void)
     /* Reset and reconfigure the Network Card layer. */
     network_reset();
 
-    if (joystick_type != JOYSTICK_TYPE_NONE)
+    if (joystick_type)
 	gameport_update_joystick_type();
 
     ui_sb_update_panes();
@@ -999,7 +999,7 @@ pc_thread(void *param)
 			mbstowcs(wcpu, cpu_s->name,
 				 strlen(cpu_s->name)+1);
 			swprintf(temp, sizeof_w(temp),
-				 L"%ls v%ls [f7dcd358, build 2694] - %i%% - %ls - %ls/%ls - %ls",
+				 L"%ls v%ls - %i%% - %ls - %ls/%ls - %ls",
 				 EMU_NAME_W,EMU_VERSION_W,fps,wmachine,wcpufamily,wcpu,
 				 (!mouse_capture) ? plat_get_string(IDS_2077)
 				  : (mouse_get_buttons() > 2) ? plat_get_string(IDS_2078) : plat_get_string(IDS_2079));

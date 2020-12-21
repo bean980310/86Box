@@ -33,9 +33,6 @@ ifeq ($(DEV_BUILD), y)
  ifndef DEV_BRANCH
   DEV_BRANCH	:= y
  endif
- ifndef 596B
-  596B		:= y
- endif
  ifndef AMD_K5
   AMD_K5	:= y
  endif
@@ -96,17 +93,8 @@ ifeq ($(DEV_BUILD), y)
  ifndef XL24
   XL24		:= y
  endif
- ifndef NO_SIO
-  NO_SIO	:= y
- endif
- ifndef GUSMAX
-  GUSMAX	:= y
- endif
  ifndef USE_VECT486VL
   USE_VECT486VL	:= y
- endif
- ifndef USE_DELLS4
-  USE_DELLS4	:= y
  endif
 else
  ifndef DEBUG
@@ -114,9 +102,6 @@ else
  endif
  ifndef DEV_BRANCH
   DEV_BRANCH	:= n
- endif
- ifndef 596B
-  596B		:= n
  endif
  ifndef AMD_K5
   AMD_K5	:= n
@@ -178,17 +163,8 @@ else
  ifndef XL24
   XL24		:= n
  endif
- ifndef NO_SIO
-  NO_SIO	:= n
- endif
- ifndef GUSMAX
-  GUSMAX	:= n
- endif
  ifndef USE_VECT486VL
   USE_VECT486VL	:= n
- endif
- ifndef USE_DELLS4
-  USE_DELLS4	:= n
  endif
 endif
 
@@ -513,6 +489,10 @@ ifeq ($(CYRIX_6X86), y)
 OPTS		+= -DUSE_CYRIX_6X86
 endif
 
+ifeq ($(GUSMAX), y)
+OPTS		+= -DUSE_GUSMAX
+endif
+
 ifeq ($(HEDAKA), y)
 OPTS		+= -DUSE_HEDAKA
 endif
@@ -525,6 +505,10 @@ endif
 ifeq ($(MGA), y)
 OPTS		+= -DUSE_MGA
 DEVBROBJ	+= vid_mga.o
+endif
+
+ifeq ($(NO_SIO), y)
+OPTS		+= -DNO_SIO
 endif
 
 ifeq ($(OPEN_AT), y)
@@ -568,10 +552,6 @@ OPTS		+= -DUSE_M6117
 DEVBROBJ	+= ali6117.o
 endif
 
-ifeq ($(596B), y)
-OPTS		+= -DUSE_596B
-endif
-
 ifeq ($(VGAWONDER), y)
 OPTS		+= -DUSE_VGAWONDER
 endif
@@ -580,20 +560,8 @@ ifeq ($(XL24), y)
 OPTS		+= -DUSE_XL24
 endif
 
-ifeq ($(NO_SIO), y)
-OPTS		+= -DNO_SIO
-endif
-
-ifeq ($(GUSMAX), y)
-OPTS		+= -DUSE_GUSMAX
-endif
-
 ifeq ($(USE_VECT486VL), y)
 OPTS		+= -DUSE_VECT486VL
-endif
-
-ifeq ($(USE_DELLS4), y)
-OPTS		+= -DUSE_DELLS4
 endif
 
 endif
@@ -618,7 +586,7 @@ MAINOBJ		:= pc.o config.o random.o timer.o io.o acpi.o apm.o dma.o ddma.o \
 		   usb.o device.o nvr.o nvr_at.o nvr_ps2.o \
 		   $(VNCOBJ)
 
-MEMOBJ		:= catalyst_flash.o intel_flash.o mem.o rom.o smram.o spd.o sst_flash.o
+MEMOBJ		:= catalyst_flash.o i2c_eeprom.o intel_flash.o mem.o rom.o smram.o spd.o sst_flash.o
 
 CPUOBJ		:= cpu.o cpu_table.o \
 		    808x.o 386.o 386_common.o 386_dynarec.o 386_dynarec_ops.o $(CGTOBJ) \
@@ -628,7 +596,7 @@ CPUOBJ		:= cpu.o cpu_table.o \
 CHIPSETOBJ	:= acc2168.o cs8230.o ali1429.o headland.o intel_82335.o cs4031.o \
 		    intel_420ex.o intel_4x0.o intel_sio.o intel_piix.o ioapic.o \
 		    neat.o opti495.o opti895.o opti5x7.o scamp.o scat.o via_vt82c49x.o via_vt82c505.o \
-		    sis_85c310.o sis_85c4xx.o sis_85c496.o opti283.o opti291.o umc491.o \
+		    sis_85c310.o sis_85c4xx.o sis_85c496.o sis_85c50x.o opti283.o opti291.o umc491.o \
 		    via_apollo.o via_pipc.o wd76c10.o vl82c480.o
 
 MCHOBJ		:= machine.o machine_table.o \
@@ -637,7 +605,7 @@ MCHOBJ		:= machine.o machine_table.o \
 		    m_xt_xi8088.o m_xt_zenith.o \
 		    m_pcjr.o \
 		    m_amstrad.o m_europc.o \
-		    m_olivetti_m24.o m_tandy.o \
+		    m_xt_olivetti.o m_tandy.o \
 		    m_at.o m_at_commodore.o \
 		    m_at_t3100e.o m_at_t3100e_vid.o \
 		    m_ps1.o m_ps1_hdc.o \
@@ -649,8 +617,8 @@ MCHOBJ		:= machine.o machine_table.o \
 			m_at_misc.o
 
 DEVOBJ		:= bugger.o hwm.o hwm_lm75.o hwm_lm78.o hwm_gl518sm.o hwm_vt82c686.o ibm_5161.o isamem.o isartc.o \
-		    lpt.o pci_bridge.o postcard.o serial.o vpc2007.o \
-		    i2c.o i2c_eeprom.o i2c_gpio.o smbus_piix4.o \
+		    lpt.o pci_bridge.o postcard.o serial.o vpc2007.o clock_ics9xxx.o \
+		    i2c.o i2c_gpio.o smbus_piix4.o \
 		   keyboard.o \
 		    keyboard_xt.o keyboard_at.o \
 		   mouse.o \
@@ -781,7 +749,9 @@ VIDOBJ		:= video.o \
 		    vid_voodoo_display.o vid_voodoo_fb.o \
 		    vid_voodoo_fifo.o vid_voodoo_reg.o \
 		    vid_voodoo_render.o vid_voodoo_setup.o \
-		    vid_voodoo_texture.o
+		    vid_voodoo_texture.o \
+			vid_ogc.o \
+			vid_nga.o
 
 PLATOBJ		:= win.o \
 		    win_dynld.o win_thread.o \

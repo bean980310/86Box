@@ -462,9 +462,9 @@ static void
 writemem(uint32_t s, uint16_t v)
 {
     if (opcode & 1)
-	return writememw(s, cpu_state.eaaddr, v);
+	writememw(s, cpu_state.eaaddr, v);
     else
-	return writememb(s, cpu_state.eaaddr, (uint8_t) (v & 0xff));
+	writememb(s, cpu_state.eaaddr, (uint8_t) (v & 0xff));
 }
 
 
@@ -1207,9 +1207,11 @@ check_interrupts(void)
 		wait(3, 0);
 		/* ACK to PIC */
 		temp = pic_irq_ack();
+		wait(4, 1);
 		wait(1, 0);
 		/* ACK to PIC */
 		temp = pic_irq_ack();
+		wait(4, 1);
 		wait(1, 0);
 		in_lock = 0;
 		clear_lock = 0;

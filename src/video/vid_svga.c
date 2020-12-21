@@ -457,6 +457,9 @@ svga_recalctimings(svga_t *svga)
 		if (svga->seqregs[1] & 8) /*40 column*/ {
 			svga->render = svga_render_text_40;
 			svga->hdisp *= (svga->seqregs[1] & 1) ? 16 : 18;
+			/* Character clock is off by 1 now in 40-line modes, on all cards. */
+                        svga->ma_latch--;
+                        svga->hdisp += (svga->seqregs[1] & 1) ? 16 : 18;
 		} else {
 			svga->render = svga_render_text_80;
 			svga->hdisp *= (svga->seqregs[1] & 1) ? 8 : 9;
