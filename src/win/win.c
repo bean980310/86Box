@@ -355,7 +355,7 @@ WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpszArg, int nCmdShow)
     hinstance = hInst;
 
     /* Set the application version ID string. */
-    sprintf(emu_version, "%s v%s", EMU_NAME, EMU_VERSION);
+    sprintf(emu_version, "%s v%s [d98d74a5, build 2738]", EMU_NAME, EMU_VERSION);
 
     /* First, set our (default) language. */
     set_language(0x0409);
