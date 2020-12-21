@@ -97,7 +97,7 @@ machine_pc82_init(const machine_t *model)
 {
     int ret, ret2;
 
-    ret = bios_load_linear(L"roms/machines/ibmpc82/pc102782.bin",
+    ret = bios_load_linear(L"roms/machines/ibmpc82/BIOS_5150_27OCT82_U33.BIN",
 			   0x000fe000, 40960, 0);
     if (ret) {
 	ret2 = bios_load_aux_linear(L"roms/machines/ibmpc82/ibm-basic-1.10.rom",
@@ -140,12 +140,12 @@ machine_xt_init(const machine_t *model)
 {
     int ret;
 
-    ret = bios_load_linear(L"roms/machines/ibmxt/xt.rom",
+    ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 			   0x000f0000, 65536, 0);
 	if (ret) {
-		bios_load_aux_linear(L"roms/machines/ibmxt/1501512.u18",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 				     0x000f8000, 24576, 0);
-		bios_load_aux_linear(L"roms/machines/ibmxt/5000027.u19",
+		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U19_5000027_27256.BIN",
 				     0x000f0000, 32768, 0);
     }
 
