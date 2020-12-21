@@ -141,17 +141,14 @@ machine_xt_init(const machine_t *model)
     int ret;
 
     ret = bios_load_linear(L"roms/machines/ibmxt/xt.rom",
-			   0x000f0000, 65536, 0);
-    if (!ret){
-        ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
-			   0x000f0000, 65536, 0); 
+			   0x000f0000, 65536, 0x6000);
 	if (ret) {
 		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 				     0x000f8000, 24576, 0);
 		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U19_5000027_27256.BIN",
 				     0x000f0000, 32768, 0);
     }
-    }
+
     if (bios_only || !ret)
 	return ret;
 
@@ -168,7 +165,7 @@ machine_xtportable_init(const machine_t *model)
     int ret;
 
     ret = bios_load_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
-			   0x000f0000, 65536, 0);
+			   0x000f0000, 65536, 0x6000);
 	if (ret) {
 		bios_load_aux_linear(L"roms/machines/ibmxt/BIOS_5160_08NOV82_U18_1501512.BIN",
 				     0x000f8000, 24576, 0);
