@@ -22,9 +22,14 @@
 extern const device_t	acc2168_device;
 
 /* ALi */
+extern const device_t	ali1217_device;
 extern const device_t	ali1429_device;
 #if defined(DEV_BRANCH) && defined(USE_M1489)
 extern const device_t	ali1489_device;
+#endif
+#if defined(DEV_BRANCH) && defined(USE_M154X)
+extern const device_t	ali1531_device;
+extern const device_t	ali1543_device;
 #endif
 #if defined(DEV_BRANCH) && defined(USE_M6117)
 extern const device_t	ali6117d_device;
@@ -40,6 +45,10 @@ extern const device_t	scat_4_device;
 extern const device_t	scat_sx_device;
 extern const device_t	cs8230_device;
 extern const device_t   cs4031_device;
+
+/* G2 */
+extern const device_t   gc100_device;
+extern const device_t   gc100a_device;
 
 /* Headland */
 extern const device_t	headland_gc10x_device;
@@ -101,17 +110,12 @@ extern const device_t	sis_5571_device;
 #endif
 
 /* ST */
-#if defined(DEV_BRANCH) && defined(USE_STPC)
 extern const device_t	stpc_client_device;
 extern const device_t	stpc_consumer2_device;
 extern const device_t	stpc_elite_device;
 extern const device_t	stpc_atlas_device;
 extern const device_t	stpc_serial_device;
 extern const device_t	stpc_lpt_device;
-#endif
-
-/* UMC */
-extern const device_t   umc491_device;
 
 /* VIA */
 extern const device_t   via_vt82c49x_device;
@@ -141,4 +145,7 @@ extern const device_t	wd76c10_device;
 extern const device_t   phoenix_486_jumper_device;
 extern const device_t	vpc2007_device;
 
+#if defined(DEV_BRANCH) && defined(USE_OLIVETTI)
+extern const device_t   olivetti_eva_device;
+#endif
 #endif	/*EMU_CHIPSET_H*/

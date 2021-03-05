@@ -66,6 +66,11 @@ extern int	dopause,			/* system is paused */
 		doresize,			/* screen resize requested */
 		quited,				/* system exit requested */
 		mouse_capture;			/* mouse is captured in app */
+
+#ifdef MTR_ENABLED
+extern int tracing_on;
+#endif
+
 extern uint64_t	timer_freq;
 extern int	infocus;
 extern char	emu_version[200];		/* version ID string */
@@ -152,16 +157,23 @@ extern void	thread_reset_event(event_t *arg);
 extern int	thread_wait_event(event_t *arg, int timeout);
 extern void	thread_destroy_event(event_t *arg);
 
+#define MUTEX_DEFAULT_SPIN_COUNT 1024
+
 extern mutex_t	*thread_create_mutex(void);
+extern mutex_t	*thread_create_mutex_with_spin_count(unsigned int spin_count);
 extern void	thread_close_mutex(mutex_t *arg);
 extern int	thread_wait_mutex(mutex_t *arg);
 extern int	thread_release_mutex(mutex_t *mutex);
-
 
 /* Other stuff. */
 extern void	startblit(void);
 extern void	endblit(void);
 extern void	take_screenshot(void);
+
+#ifdef MTR_ENABLED
+extern void init_trace(void);
+extern void shutdown_trace(void);
+#endif
 
 #ifdef __cplusplus
 }
