@@ -166,7 +166,6 @@ static void
 video_toggle_option(HMENU h, int *val, int id)
 {
     startblit();
-    video_wait_for_blit();
     *val ^= 1;
     CheckMenuItem(h, id, *val ? MF_CHECKED : MF_UNCHECKED);
     endblit();
@@ -663,6 +662,7 @@ MainWindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				reset_screen_size();
 				device_force_redraw();
 				video_force_resize_set(1);
+				doresize = 1;
 				config_save();
 				break;
 
@@ -1467,8 +1467,6 @@ plat_resize(int x, int y)
 
     /* First, see if we should resize the UI window. */
     if (!vid_resize) {
-	video_wait_for_blit();
-
 
 	/* scale the screen base on DPI */
 	if (dpi_scale) {

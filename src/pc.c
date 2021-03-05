@@ -508,7 +508,7 @@ usage:
     (void)time(&now);
     info = localtime(&now);
     strftime(temp, sizeof(temp), "%Y/%m/%d %H:%M:%S", info);
-    pclog("#\n# %ls v%ls [d98d74a5, build 2738] logfile, created %s\n#\n",
+    pclog("#\n# %ls v%ls logfile, created %s\n#\n",
 		EMU_NAME_W, EMU_VERSION_W, temp);
     pclog("# Emulator path: %ls\n", exe_path);
     pclog("# Userfiles path: %ls\n", usr_path);
@@ -647,26 +647,15 @@ pc_init_modules(void)
 }
 
 
-/* Insert keystrokes into the machine's keyboard buffer. */
-static void
-pc_keyboard_send(uint8_t val)
-{
-    if (AT)
-	keyboard_at_adddata_keyboard_raw(val);
-    else
-	keyboard_send(val);
-}
-
-
 void
-pc_send_ca(uint8_t sc)
+pc_send_ca(uint16_t sc)
 {
-    pc_keyboard_send(29);	/* Ctrl key pressed */
-    pc_keyboard_send(56);	/* Alt key pressed */
-    pc_keyboard_send(sc);
-    pc_keyboard_send(sc | 0x80);
-    pc_keyboard_send(184);	/* Alt key released */
-    pc_keyboard_send(157);	/* Ctrl key released */
+    keyboard_input(1, 0x1D);	/* Ctrl key pressed */
+    keyboard_input(1, 0x38);	/* Alt key pressed */
+    keyboard_input(1, sc);
+    keyboard_input(0, sc);
+    keyboard_input(0, 0x38);	/* Alt key released */
+    keyboard_input(0, 0x1D);	/* Ctrl key released */
 }
 
 
@@ -674,7 +663,7 @@ pc_send_ca(uint8_t sc)
 void
 pc_send_cad(void)
 {
-    pc_send_ca(83);
+    pc_send_ca(0xE053);
 }
 
 
@@ -999,7 +988,7 @@ pc_thread(void *param)
 			mbstowcs(wcpu, cpu_s->name,
 				 strlen(cpu_s->name)+1);
 			swprintf(temp, sizeof_w(temp),
-				 L"%ls v%ls [d98d74a5, build 2738] - %i%% - %ls - %ls/%ls - %ls",
+				 L"%ls v%ls - %i%% - %ls - %ls/%ls - %ls",
 				 EMU_NAME_W,EMU_VERSION_W,fps,wmachine,wcpufamily,wcpu,
 				 (!mouse_capture) ? plat_get_string(IDS_2077)
 				  : (mouse_get_buttons() > 2) ? plat_get_string(IDS_2078) : plat_get_string(IDS_2079));

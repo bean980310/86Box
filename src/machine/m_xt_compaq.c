@@ -65,33 +65,6 @@ machine_xt_compaq_deskpro_init(const machine_t *model)
     return ret;
 }
 
-int
-machine_xt_compaq_deskpro87_init(const machine_t *model)
-{
-    int ret;
-
-    ret = bios_load_linear(L"roms/machines/deskpro/Compaq - BIOS - Revision J - 106265-002.bin",
-			   0x000fe000, 8192, 0);
-
-    if (bios_only || !ret)
-	return ret;
-
-    machine_common_init(model);
-
-    pit_ctr_set_out_func(&pit->counters[1], pit_refresh_timer_xt);
-
-    device_add(&keyboard_xt_compaq_device);
-    if (fdc_type == FDC_INTERNAL)
-	device_add(&fdc_xt_device);
-    nmi_init();
-    if (joystick_type)
-	device_add(&gameport_device);
-
-    lpt1_remove();
-    lpt1_init(0x03bc);
-
-    return ret;
-}
 
 int
 machine_xt_compaq_portable_init(const machine_t *model)
